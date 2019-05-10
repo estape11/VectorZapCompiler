@@ -13,16 +13,21 @@
 %
 %******************************************************
 
+[=, A, 100]
 [=, b, 1]							% Scalar assignation
 [=, c, 10]							% Scalar assignation
 [NOP]
 [NOP]
+[+, A, Z, c]
+[)), e, c, 3]
+[((, h, c, 3]
+[-, a, c, b]
 [=, f, b]							% Scalar assignation
 [=, A, B]							% Scalar assignation
 [+, a, b, c]						% Scalar add
 [+, d, b, 345]						% Scalar add
 [+, A, B, C]						% Vector add
-[+, A, b, C]						% Scalar add operation over vector
+[+, A, C, b]						% Scalar add operation over vector
 
 #for 10
 [NOP]

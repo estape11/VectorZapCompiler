@@ -197,7 +197,7 @@ bit *InstructionHelper::GetMode(std::vector<std::string> splittedInst, bool imme
 			if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) && IsVector(splittedInst[3])){ // Vector - Vector
 				pTemp = BaseHelper::DecimalToBin(2, 2);
 
-			} else if (IsVector(splittedInst[1]) && !IsVector(splittedInst[2]) && IsVector(splittedInst[3])) { // Scalar - Vector
+			} else if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) && !IsVector(splittedInst[3])) { // Scalar - Vector
 				pTemp = BaseHelper::DecimalToBin(3, 2);
 
 			} else { // Scalar - Scalar
