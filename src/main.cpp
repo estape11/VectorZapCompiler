@@ -37,6 +37,7 @@ int IsInVegReg(int reg){
 	for (int i = 0 ; i < pipeVecReg.size() ; i++){
 		if (pipeVecReg[i] == reg){
 			temp = pipeVecReg.size() - i;
+			//printf("Match, %d = %d, %d\n", reg, pipeVecReg[i], temp);
 			break;
 
 		}
@@ -135,14 +136,17 @@ int main(int argc, const char* argv[]){
 		} else {
 			bit *pTemp = InstructionHelper::GetInstructionBinary(lines[i]);
 			if (pTemp!=NULL){
-				if (pTemp[1] == 1 && pTemp[0] == 0){
+				if (pTemp[1] == 1){
+					//printf("Case 10\n");
 					int ra = BaseHelper::BinToDecimal(pTemp+13,4);
 					int rb = BaseHelper::BinToDecimal(pTemp+17,4);
 
 					// NOPS
-					int nops = IsInVegReg(ra);
-					if (nops > 0){
-						for (int i = 0 ; i< nops ; i++){
+					int nopsA = IsInVegReg(ra);
+					int nopsB = IsInVegReg(rb);
+
+					if (nopsA > 0 && nopsA > nopsB){
+						for (int i = 0 ; i< nopsA ; i++){
 							//BaseHelper::PrintBin(pNop, 32);
 							validLines++;
 							for (int i = LENGTH; i >= 0; i--){
@@ -153,46 +157,10 @@ int main(int argc, const char* argv[]){
 
 						}
 						
-					} else {
-						nops = IsInVegReg(rb);
-						if (nops > 0) {
-							for (int i = 0 ; i< nops ; i++){
-								//BaseHelper::PrintBin(pNop, 32);
-								validLines++;
-								for (int i = LENGTH; i >= 0; i--){
-									memFile << (int) pNop[i];
-
-								}
-								memFile << "\n";
-
-							}
-
-						}
 					}
-
-					//BaseHelper::PrintBin(pTemp, 32);
-					//BaseHelper::PrintBin(pTemp, 32);
-					UpdateVecReg(BaseHelper::BinToDecimal(pTemp+9,4));
-					validLines+=2;
-					for (int i = LENGTH; i >= 0; i--){
-						memFile << (int) pTemp[i];
-
-					}
-					memFile << "\n";
-					for (int i = LENGTH; i >= 0; i--){
-						memFile << (int) pTemp[i];
-
-					}
-					memFile << "\n";
-
-				} else if (pTemp[1] == 1 && pTemp[0] == 1){
-					int ra = BaseHelper::BinToDecimal(pTemp+13,4);
-					int rb = BaseHelper::BinToDecimal(pTemp+17,4);
-
-					// NOPS
-					int nops = IsInVegReg(ra);
-					if (nops > 0){
-						for (int i = 0 ; i< nops ; i++){
+					
+					if (nopsB > 0 && nopsB >= nopsA) {
+						for (int i = 0 ; i< nopsB ; i++){
 							//BaseHelper::PrintBin(pNop, 32);
 							validLines++;
 							for (int i = LENGTH; i >= 0; i--){
@@ -202,22 +170,7 @@ int main(int argc, const char* argv[]){
 							memFile << "\n";
 
 						}
-						
-					} else {
-						nops = IsInVegReg(rb);
-						if (nops > 0) {
-							for (int i = 0 ; i< nops ; i++){
-								//BaseHelper::PrintBin(pNop, 32);
-								validLines++;
-								for (int i = LENGTH; i >= 0; i--){
-									memFile << (int) pNop[i];
 
-								}
-								memFile << "\n";
-
-							}
-
-						}
 					}
 
 					//BaseHelper::PrintBin(pTemp, 32);
