@@ -76,6 +76,8 @@ public:
 	// @return binary
 	static bit *GetInstructionBinary(std::string);
 
+	static int GetPragmaValue(std::string);
+
 private:
 
 };

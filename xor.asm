@@ -13,21 +13,14 @@
 %
 %******************************************************
 
+[=, a, 0]		% Stores the base address
+[=, b, 5]		% Stores the xor key
 
-#for(10)
-[+, a, a, 1]
+#for (1250)
+
+[=:, A, a]		% Loads the data over the vector A
+[^, B, A, b]	% XOR over the pixels
+[:=, B, b]		% Store the vector in memory
+[+, a, a, 2]	% Increment the address by 2
+
 #end
-
-#for(2)
-[=:, A, a]
-[+, a, a, 1]
-[+, B, A, A]
-#end
-
-[#]
-[@]
-[_]
-
-[=:, A, a]
-[+, a, a, 1]
-[+, B, A, A]

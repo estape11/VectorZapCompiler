@@ -16,7 +16,7 @@
 #include <InstructionHelper.hpp>
 
 // Tokens for the instruction translate
-std::vector<std::string> static vectorRegisters = {"Z", "A", "B", "C", "D"};
+std::vector<std::string> static vectorRegisters = {"Z", "A", "B", "C", "D", "E"};
 std::vector<std::string> static scalarRegisters = {"z", "a", "b", "c", "d", "e", "f", "g", "h"};
 std::vector<std::string> static opTypeA = {"+", "-"};
 std::vector<std::string> static opTypeL = {"&", "|", "^", ">>", "<<", "))", "(("};
@@ -176,6 +176,9 @@ bit *InstructionHelper::GetMode(std::vector<std::string> splittedInst, bool imme
 			if (IsVector(splittedInst[1]) && IsVector(splittedInst[2])){ // Vector - Vector
 				pTemp = BaseHelper::DecimalToBin(2, 2);
 
+			} else if (IsVector(splittedInst[1]) && !IsVector(splittedInst[2])) {
+				pTemp = BaseHelper::DecimalToBin(3, 2);
+
 			} else { // Scalar - Scalar
 				pTemp = BaseHelper::DecimalToBin(1, 2);
 
@@ -218,36 +221,57 @@ bit *InstructionHelper::GetInstructionBinary(std::string instruction){
 	bit *pBinary = (bit *) malloc(sizeof(bit)*32);
 	memset(pBinary, 0, 32);
 	if (splittedInst.size() == 1 ){
-		if (splittedInst[0] == "HALT"){
-			pBinary[1] = 1;
+		if (splittedInst[0] == "@"){
 			pBinary[2] = 1;
+			pBinary[3] = 1;
+
+		} else if (splittedInst[0] == "#"){
+			pBinary[5] = 1;
+			pBinary[6] = 1;
+			pBinary[7] = 1;
+			pBinary[8] = 1;			
 
 		} // else NOP already set by memset 
 
-	} else if (splittedInst.size() == 3){ // Assign operation
+	} else if (splittedInst.size() == 3){ // Type D
 		bit *pImmediate = GetImmediate(splittedInst[2]);
 		bit *pOpCode = GetOperation(splittedInst[0]);
 		bit *pMode = NULL;
 		bit *pDestReg = NULL;
 		bit *pOp1Reg = NULL;
-		if (pImmediate == NULL){ // There is no immediate
-			pMode = GetMode(splittedInst, false);
-			pDestReg = GetRegister(splittedInst[1]);
-			pOp1Reg = GetRegister(splittedInst[2]);
-			memcpy(pBinary, pMode, 2);
-			memcpy(pBinary+2, pOpCode, 7);
-			memcpy(pBinary+9, pDestReg, 4);
-			memcpy(pBinary+17, pOp1Reg, 4);
+		if (splittedInst[0] == ":="){
+			if (pImmediate == NULL){ // There is no immediate
+				pMode = GetMode(splittedInst, false);
+				pDestReg = GetRegister(splittedInst[1]);
+				pOp1Reg = GetRegister(splittedInst[2]);
+				memcpy(pBinary, pMode, 2);
+				memcpy(pBinary+2, pOpCode, 7);
+				memcpy(pBinary+13, pDestReg, 4);
+				memcpy(pBinary+17, pOp1Reg, 4);
 
-		} else { // With immediate
-			pMode = GetMode(splittedInst, true);
-			pOpCode[2] = 1; // Sets the immediate bit
-			pDestReg = GetRegister(splittedInst[1]);
-			memcpy(pBinary, pMode, 2);
-			memcpy(pBinary+2, pOpCode, 7);
-			memcpy(pBinary+9, pDestReg, 4);
-			memcpy(pBinary+17, pImmediate, 15);
+			} 
 
+		} else {
+			if (pImmediate == NULL){ // There is no immediate
+				pMode = GetMode(splittedInst, false);
+				pDestReg = GetRegister(splittedInst[1]);
+				pOp1Reg = GetRegister(splittedInst[2]);
+				memcpy(pBinary, pMode, 2);
+				memcpy(pBinary+2, pOpCode, 7);
+				memcpy(pBinary+9, pDestReg, 4);
+				memcpy(pBinary+17, pOp1Reg, 4);
+
+
+			} else { // With immediate
+				pMode = GetMode(splittedInst, true);
+				pOpCode[2] = 1; // Sets the immediate bit
+				pDestReg = GetRegister(splittedInst[1]);
+				memcpy(pBinary, pMode, 2);
+				memcpy(pBinary+2, pOpCode, 7);
+				memcpy(pBinary+9, pDestReg, 4);
+				memcpy(pBinary+17, pImmediate, 15);
+				
+			}
 		}
 
 	} else { // The rest
@@ -283,4 +307,36 @@ bit *InstructionHelper::GetInstructionBinary(std::string instruction){
 
 	}
 	return pBinary;
+}
+
+int InstructionHelper::GetPragmaValue(std::string data){
+	int temp = -1;
+	std::string strTemp = "";
+	bool start = false;
+
+	for (unsigned int i =0 ; i<data.size();i++){
+		if (data[i] == ')'){
+			break;
+
+		} 
+
+		if (data[i] == '(') {
+			start = true;
+			continue;
+
+		}
+
+		if (start) {
+			strTemp += data[i];
+
+		}
+
+	}
+	
+	if (strTemp != ""){
+		temp = std::stoi(strTemp);
+
+	}
+	return temp;
+
 }
