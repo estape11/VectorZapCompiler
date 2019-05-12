@@ -242,12 +242,23 @@ bit *InstructionHelper::GetInstructionBinary(std::string instruction){
 		if (splittedInst[0] == ":="){
 			if (pImmediate == NULL){ // There is no immediate
 				pMode = GetMode(splittedInst, false);
-				pDestReg = GetRegister(splittedInst[1]);
-				pOp1Reg = GetRegister(splittedInst[2]);
-				memcpy(pBinary, pMode, 2);
-				memcpy(pBinary+2, pOpCode, 7);
-				memcpy(pBinary+13, pDestReg, 4);
-				memcpy(pBinary+17, pOp1Reg, 4);
+				if (pMode[1] == 0 && pMode[0] == 1) { // scalar store
+					pDestReg = GetRegister(splittedInst[1]);
+					pOp1Reg = GetRegister(splittedInst[2]);
+					memcpy(pBinary, pMode, 2);
+					memcpy(pBinary+2, pOpCode, 7);
+					memcpy(pBinary+13, pOp1Reg, 4);
+					memcpy(pBinary+17, pDestReg, 4);
+
+				} else {
+					pDestReg = GetRegister(splittedInst[1]);
+					pOp1Reg = GetRegister(splittedInst[2]);
+					memcpy(pBinary, pMode, 2);
+					memcpy(pBinary+2, pOpCode, 7);
+					memcpy(pBinary+13, pDestReg, 4);
+					memcpy(pBinary+17, pOp1Reg, 4);
+
+				}
 
 			} 
 

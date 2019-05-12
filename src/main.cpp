@@ -24,6 +24,10 @@ std::vector<int> pipeVecReg = {-1, -1};
 void UpdateVecReg(int reg){
 	pipeVecReg.pop_back(); // out from pipe
     pipeVecReg.insert(pipeVecReg.begin(), reg);
+    //for (int i = 0 ; i <pipeVecReg.size();i++){
+    //	std::cout<<pipeVecReg[i]<<", ";
+    //}
+    //std::cout<<std::endl;
 
 }
 
@@ -34,6 +38,7 @@ int IsInVegReg(int reg){
 		if (pipeVecReg[i] == reg){
 			temp = pipeVecReg.size() - i;
 			break;
+
 		}
 
 	}
@@ -88,7 +93,7 @@ int main(int argc, const char* argv[]){
 
 	int validLines = 0;
 
-	std::cout<< ">>\n>> \t"<<inFile<<" >> "<<outFile<<"\n>>\n";
+	std::cout<< ">>\n>> \t" << inFile << " >> " << outFile << "\n>>" <<std::endl;
 
 	// Open the file
 	std::ofstream memFile (outFile);
@@ -136,7 +141,7 @@ int main(int argc, const char* argv[]){
 
 					// NOPS
 					int nops = IsInVegReg(ra);
-					if (nops != 0){
+					if (nops > 0){
 						for (int i = 0 ; i< nops ; i++){
 							//BaseHelper::PrintBin(pNop, 32);
 							validLines++;
@@ -150,7 +155,7 @@ int main(int argc, const char* argv[]){
 						
 					} else {
 						nops = IsInVegReg(rb);
-						if (nops != 0) {
+						if (nops > 0) {
 							for (int i = 0 ; i< nops ; i++){
 								//BaseHelper::PrintBin(pNop, 32);
 								validLines++;
@@ -181,6 +186,40 @@ int main(int argc, const char* argv[]){
 					memFile << "\n";
 
 				} else if (pTemp[1] == 1 && pTemp[0] == 1){
+					int ra = BaseHelper::BinToDecimal(pTemp+13,4);
+					int rb = BaseHelper::BinToDecimal(pTemp+17,4);
+
+					// NOPS
+					int nops = IsInVegReg(ra);
+					if (nops > 0){
+						for (int i = 0 ; i< nops ; i++){
+							//BaseHelper::PrintBin(pNop, 32);
+							validLines++;
+							for (int i = LENGTH; i >= 0; i--){
+								memFile << (int) pNop[i];
+
+							}
+							memFile << "\n";
+
+						}
+						
+					} else {
+						nops = IsInVegReg(rb);
+						if (nops > 0) {
+							for (int i = 0 ; i< nops ; i++){
+								//BaseHelper::PrintBin(pNop, 32);
+								validLines++;
+								for (int i = LENGTH; i >= 0; i--){
+									memFile << (int) pNop[i];
+
+								}
+								memFile << "\n";
+
+							}
+
+						}
+					}
+
 					//BaseHelper::PrintBin(pTemp, 32);
 					//BaseHelper::PrintBin(pTemp, 32);
 					UpdateVecReg(BaseHelper::BinToDecimal(pTemp+9,4));
@@ -196,7 +235,7 @@ int main(int argc, const char* argv[]){
 					}
 					memFile << "\n";
 
-				} else {
+				} else if (pTemp[1] == 0 && pTemp[0] == 1) {
 					//BaseHelper::PrintBin(pTemp, 32);
 					UpdateVecReg(-1);
 					validLines++;
@@ -205,6 +244,44 @@ int main(int argc, const char* argv[]){
 
 					}
 					memFile << "\n";
+
+				} else { // NOP mode
+					if ( (pTemp[2]==1 && // HALT
+							pTemp[3]==1) ||
+						 (pTemp[5]==1 && // DUMP
+						  pTemp[6]==1 && 
+						  pTemp[7]==1 &&
+						  pTemp[8]==1)){
+						// Add 4 NOPS
+						for (int i = 0 ; i < 4 ; i++){
+							validLines++;
+							for (int i = LENGTH; i >= 0; i--){
+								memFile << (int) pNop[i];
+
+							}
+							memFile << "\n";
+							UpdateVecReg(-1);
+
+						}
+						validLines++;
+						// Save the inst
+						for (int i = LENGTH; i >= 0; i--){
+							memFile << (int) pTemp[i];
+
+						}
+						memFile << "\n";
+						UpdateVecReg(-1);
+
+					} else { // Basic Nop
+						validLines++;
+						for (int i = LENGTH; i >= 0; i--){
+							memFile << (int) pNop[i];
+
+						}
+						memFile << "\n";
+						UpdateVecReg(-1);
+
+					}
 
 				}
 			}

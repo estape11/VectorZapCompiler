@@ -15,13 +15,14 @@
 CC=g++
 FLAGS=
 APP=main
+APPNAME=cvz
 LINKER_FLAGS=-pthread
 LIBS=../lib
 OUT=../bin
 OPTNS=-w -std=c++11
 INCLUDE=../include
 
-all:setup $(APP)
+all:setup $(APPNAME)
 
 setup:
 		mkdir -p $(OUT)
@@ -30,8 +31,8 @@ $(APP).o:$(APP).cpp
 		$(CC) $(OPTNS) -c $(APP).cpp -o $(APP).o -I$(INCLUDE)
 
 # Linking with the libraries and binary generation
-$(APP):$(APP).o setup
-		$(CC) -o $(OUT)/$(APP) $(APP).o $(LIBS)/*.o -L$(LIBS) $(LINKER_FLAGS)
+$(APPNAME):$(APP).o setup
+		$(CC) -o $(OUT)/$(APPNAME) $(APP).o $(LIBS)/*.o -L$(LIBS) $(LINKER_FLAGS)
 
 clean:
 		rm -rf $(OUT)
