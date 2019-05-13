@@ -16,13 +16,17 @@
 #include <InstructionHelper.hpp>
 
 // Tokens for the instruction translate
-std::vector<std::string> static vectorRegisters = {"Z", "A", "B", "C", "D", "E"};
-std::vector<std::string> static scalarRegisters = {"z", "a", "b", "c", "d", "e", "f", "g", "h"};
+std::vector<std::string> static vectorRegisters = {"Z", "A", "B", 
+													"C", "D", "E"};
+std::vector<std::string> static scalarRegisters = {"z", "a", "b", "c", "d",
+													 "e", "f", "g", "h"};
 std::vector<std::string> static opTypeA = {"+", "-"};
-std::vector<std::string> static opTypeL = {"&", "|", "^", ">>", "<<", "))", "(("};
+std::vector<std::string> static opTypeL = {"&", "|", "^", ">>", "<<", "))",
+											 "(("};
 std::vector<std::string> static opTypeD = {"=", ":=", "=:"};
 
-std::vector<std::string> InstructionHelper::SplitLineByChar(std::string line, char splitChar){
+std::vector<std::string> InstructionHelper::SplitLineByChar(std::string line, 
+															char splitChar){
 	std::vector<std::string> tempSplit;
 	std::string temp = "";
 
@@ -197,10 +201,12 @@ bit *InstructionHelper::GetMode(std::vector<std::string> splittedInst, bool imme
 			}
 
 		} else {
-			if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) && IsVector(splittedInst[3])){ // Vector - Vector
+			if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) &&
+			 	IsVector(splittedInst[3])){ // Vector - Vector
 				pTemp = BaseHelper::DecimalToBin(2, 2);
 
-			} else if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) && !IsVector(splittedInst[3])) { // Scalar - Vector
+			} else if (IsVector(splittedInst[1]) && IsVector(splittedInst[2]) &&
+			 	!IsVector(splittedInst[3])) { // Scalar - Vector
 				pTemp = BaseHelper::DecimalToBin(3, 2);
 
 			} else { // Scalar - Scalar

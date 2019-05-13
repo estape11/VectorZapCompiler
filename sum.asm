@@ -27,11 +27,12 @@
 [-, e, e, 1]	% Restore the address
 [=:, C, e]		% Loads the mask into vector C 
 
-#for(1250)
+#for(288)
 
 [=:, A, a]		% Loads the data over the vector A
 [+, B, A, C]	% Add the mask
 [:=, B, a]		% Store the vector in memory
-[+, a, a, 2]	% Increment the address by 2
+[+, a, 2]	% Increment the address by 2
 
 #end
+[#]
